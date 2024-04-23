@@ -16,7 +16,8 @@ On entering data:11448,a b c india limited,shivsena,shivsena,a b c india limited
 ![image](https://github.com/satiscugcat/ES113-Assignment-4/assets/143333884/21965a5e-004f-48cb-88fb-339deda86814)
 
 WINDOWS
-To set the web page up, download a files in a virtual environnment with flask, flask-mysqldb installed. Then, run the following commands after opening command prompt with administrator permissions.
+
+To set the web page up, first add the assignment4 folder to "C:\ProgramData\MySQL\MySQL Server 8.0\Data\" alongside the other databases, thendownload a files in a virtual environnment with flask, flask-mysqldb installed. Then, run the following commands after opening command prompt with administrator permissions.
 ![image](https://github.com/satiscugcat/ES113-Assignment-4/assets/143333884/77714559-72a7-49e4-bce4-2711f46f7c26)
 
 
