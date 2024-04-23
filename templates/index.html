@@ -1,0 +1,353 @@
+<!doctype HTML>
+<head>
+    <title>DCC ASSIGNMENT</title>
+    <style>
+    form.form-example{
+        display: table;
+    }
+    div.form-example{
+        display: table-row;
+    }
+
+    label,input{
+        display: table-cell;
+        margin-bottom: 10px;
+    }
+
+    label{
+        padding-right: 10px;
+    }
+
+    table, th, td{
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    .chartBox{
+        width: 40%;
+    }
+    </style>
+
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    
+</script>
+<body>
+    <form action="" method="get" class = "form-example">
+        <div class="form-example">
+        <label for ="bond-number"> 1. Search for record based on Bond Number:</label>
+        <input type="text" name="bond-number" id="bond-number" />
+        </div>
+
+        <div class="form-example">
+            <label for ="company-individual-name"> 2. Find bond data of company or individual:</label>
+            <input type="text" name="company-individual-name" id="company-individual-name" />
+        </div>
+
+        <div class="form-example">
+            <label for ="political-party-name"> 3. Find yearwise distribution of political party:</label>
+            <input type="text" name="political-party-name" id="political-party-name" />
+        </div>
+
+        <div class="form-example">
+            <label for ="political-donations-name"> 4. Find donations to political party:</label>
+            <input type="text" name="political-donations-name" id="political-donations-name" />
+        </div>
+
+        <div class="form-example">
+            <label for ="company-donations-name"> 5. Find donations from company:</label>
+            <input type="text" name="company-donations-name" id="company-donations-name" />
+        </div>
+
+        <div class="form-example">
+            <input type="submit" value="Search"/>
+        </div>
+    </form>
+    <p>6.</p>
+    <div >
+        <canvas id="total_donations_data_chart"></canvas>
+    </div>
+    <button id="download_pie_chart">Download Pie Chart</button>
+
+    <script>
+        function Decimal(string){
+        return parseInt(string,10);
+    }
+        const donations_data={{total_donations_data|safe}};
+        new Chart("total_donations_data_chart", {
+				type: "pie",
+				data: 
+				{
+					labels: donations_data.map(x => x[0]),
+					datasets: 
+					[{
+						backgroundColor: [
+                                "#524632",
+                                "#8F7E4F",
+                                "#C3C49E",
+                                "#D8FFDD",
+                                "#DEDBD8",
+                                "#F79F79",
+                                "#F7D08A",
+                                "#E3F09B",
+                                "#87B6A7",
+                                "#5B5941",
+                                "#817F82",
+                                "#AE8CA3",
+                                "#A2ABB5",
+                                "#95D9DA",
+                                "#6DD6DA",
+                                "#DCC48E",
+                                "#EAEFD3",
+                                "#B3C0A4",
+                                "#505168",
+                                "#27233A",
+                                "#000000",
+                                "#3D2645",
+                                "#832161",
+                                "#DA4167"
+                                ],
+						borderColor: "#FFFFFF",
+						data: donations_data.map(x => x[1]),
+					}],
+				}
+			});
+            
+            let pieCanvas = document.getElementById('total_donations_data_chart');
+            let ctxPie = pieCanvas.getContext('2d');
+            document.getElementById('download_pie_chart').addEventListener('click', function(e) {
+                let canvasUrl = pieCanvas.toDataURL();
+                const createEl = document.createElement('a');
+                createEl.href = canvasUrl;
+                createEl.download = "total_donations_chart";
+                createEl.click();
+                createEl.remove();
+            });
+
+
+    </script>
+
+
+    {%if bond_number_data%}
+    <p>1.</p>
+    {%for directory in bond_number_data%}
+    
+    <table>
+        <tr>
+            {%for item in directory["headers"]%}
+                <th>{{item}}</th>
+            {%endfor%}
+        </tr>
+        {%for row in directory["data"]%}
+        <tr>
+            {%for item in row%}       
+                <td>{{item}}</td>  
+            {%endfor%}
+        </tr>
+        {%endfor%}
+    </table>
+    <br>
+    {%endfor%}
+
+    {%endif%}
+
+    {%if company_individual_bond_data%}
+    <p>2.</p>
+    <table>
+        <tr>
+            <th>Year</th>
+            <th>Number of Bonds</th>
+            <th>Total value of bonds</th>
+        </tr>
+        {%for row in company_individual_bond_data%}
+        <tr>
+            {%for item in row%}
+            <td>{{item}}</td>
+            {%endfor%}
+        </tr>
+        {%endfor%}
+    </table>
+
+    <div class="chartBox"><canvas id="company_individual_bond_data_chart" ></canvas></div>
+    <div class="chartBox"><canvas id="company_individual_bond_data_chart2" ></canvas></div>
+    <button id="company_charts">Download Company Charts</button>
+    <script>
+        function Decimal(string){
+        return parseInt(string,10);
+    }
+        const company_data_table={{company_individual_bond_data | safe}};
+
+
+        new Chart("company_individual_bond_data_chart", {
+				type: "bar",
+				data: 
+				{
+					labels: company_data_table.map(x => x[0]),
+					datasets: 
+					[{
+                        label: "Number of bonds vs Year",
+						backgroundColor:"#937aa1",
+						borderColor: "#FFFFFF",
+						data: company_data_table.map(x => x[1])
+					}],
+				}
+			}
+        );
+
+        new Chart("company_individual_bond_data_chart2", {
+				type: "bar",
+				data: 
+				{
+					labels: company_data_table.map(x => x[0]),
+					datasets: 
+					[{
+                        label: "Value of bonds vs Year",
+						backgroundColor:"#937aa1",
+						borderColor: "#FFFFFF",
+						data: company_data_table.map(x => x[2])
+					}],
+				}
+			});
+            
+            let companyNumbersCanvas = document.getElementById('company_individual_bond_data_chart');
+            let ctxcompanyNumbers = companyNumbersCanvas.getContext('2d');
+            document.getElementById('company_charts').addEventListener('click', function(e) {
+                let canvasUrl = companyNumbersCanvas.toDataURL();
+                const createEl = document.createElement('a');
+                createEl.href = canvasUrl;
+                createEl.download = "company_numbers_chart";
+                createEl.click();
+                createEl.remove();
+            });
+
+            let companyValuesCanvas = document.getElementById('company_individual_bond_data_chart2');
+            let ctxcompanyValues = companyValuesCanvas.getContext('2d');
+            document.getElementById('company_charts').addEventListener('click', function(e) {
+                let canvasUrl = companyValuesCanvas.toDataURL();
+                const createEl = document.createElement('a');
+                createEl.href = canvasUrl;
+                createEl.download = "company_values_chart";
+                createEl.click();
+                createEl.remove();
+            });
+    </script>
+    {%endif%}
+
+    {%if political_party_bond_data%}
+    <p>3.</p>
+    <table>
+        <tr>
+            <th>Year</th>
+            <th>Number of Bonds</th>
+            <th>Total value of bonds</th>
+        </tr>
+        {%for row in political_party_bond_data%}
+        <tr>
+            {%for item in row%}
+            <td>{{item}}</td>
+            {%endfor%}
+        </tr>
+        {%endfor%}
+    </table>
+
+    
+    <div class="chartBox"><canvas id="political_party_bond_data_chart" ></canvas></div>
+    <div class="chartBox"><canvas id="political_party_bond_data_chart2" ></canvas></div>
+    <button id="political_charts">Download Political Charts</button>
+    <script>
+        function Decimal(string){
+        return parseInt(string,10);
+    }
+        const data_table={{political_party_bond_data | safe}};
+
+
+        new Chart("political_party_bond_data_chart", {
+				type: "bar",
+				data: 
+				{
+					labels: data_table.map(x => x[0]),
+					datasets: 
+					[{
+                        label: "Number of bonds vs Year",
+						backgroundColor:"#937aa1",
+						borderColor: "#FFFFFF",
+						data: data_table.map(x => x[1])
+					}],
+				}
+			}
+        );
+        new Chart("political_party_bond_data_chart2", {
+				type: "bar",
+				data: 
+				{
+					labels: data_table.map(x => x[0]),
+					datasets: 
+					[{
+                        label: "Value of bonds vs Year",
+						backgroundColor:"#937aa1",
+						borderColor: "#FFFFFF",
+						data: data_table.map(x => x[2])
+					}],
+				}
+			});
+
+            let politicalNumbersCanvas = document.getElementById('political_party_bond_data_chart');
+            let ctxpoliticalNumbers = politicalNumbersCanvas.getContext('2d');
+            document.getElementById('political_charts').addEventListener('click', function(e) {
+                let canvasUrl = politicalNumbersCanvas.toDataURL();
+                const createEl = document.createElement('a');
+                createEl.href = canvasUrl;
+                createEl.download = "political_numbers_chart";
+                createEl.click();
+                createEl.remove();
+            });
+
+            let politicalValuesCanvas = document.getElementById('political_party_bond_data_chart2');
+            let ctxpoliticalValues = politicalValuesCanvas.getContext('2d');
+            document.getElementById('political_charts').addEventListener('click', function(e) {
+                let canvasUrl = politicalValuesCanvas.toDataURL();
+                const createEl = document.createElement('a');
+                createEl.href = canvasUrl;
+                createEl.download = "political_values_chart";
+                createEl.click();
+                createEl.remove();
+            });
+    </script>
+    {%endif%}
+
+    {%if political_donations_data%}
+    <p>4.</p>
+    <table>
+        <tr>
+            <th>Company/Individual</th>
+            <th>Amount Donated to Political Party</th>
+        </tr>
+        {%for row in political_donations_data%}
+        <tr>
+            {%for item in row%}
+            <td>{{item}}</td>
+            {%endfor%}
+        </tr>
+        {%endfor%}
+    </table>
+    {%endif%}
+
+    {%if company_donations_data%}
+    <p>5.</p>
+    <table>
+        <tr>
+            <th>Political Party</th>
+            <th>Amount Donated by Company</th>
+        </tr>
+        {%for row in company_donations_data%}
+        <tr>
+            {%for item in row%}
+            <td>{{item}}</td>
+            {%endfor%}
+        </tr>
+        {%endfor%}
+    </table>
+    {%endif%}
+
+
+</body>
